@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 
 // Email configuration
 const createTransporter = () => {
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.EMAIL_USER, // Your Gmail address
