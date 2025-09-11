@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { toast } from "react-toastify";
 import Modal from "./Modal";
 import {
   ClaimsModalContent,
@@ -21,11 +22,61 @@ const Dashboard = () => {
     type: "",
     title: "",
   });
+  const [mainWalletAddress, setMainWalletAddress] = useState<string>("");
+  const [backupWalletAddress, setBackupWalletAddress] = useState<string>("");
   const router = useRouter();
+
+  // Load wallet addresses from localStorage
+  useEffect(() => {
+    const savedMainWallet = localStorage.getItem("mainWalletAddress");
+    const savedBackupWallet = localStorage.getItem("backupWalletAddress");
+
+    if (savedMainWallet) {
+      setMainWalletAddress(savedMainWallet);
+    }
+    if (savedBackupWallet) {
+      setBackupWalletAddress(savedBackupWallet);
+    }
+  }, []);
+
+  const copyToClipboard = async (text: string, walletType: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${walletType} wallet address copied to clipboard!`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (err) {
+      toast.error("Failed to copy address", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
 
   const handleLogout = async () => {
     // Clear the authentication flow completion flag
     localStorage.removeItem("authFlowCompleted");
+    // Clear wallet addresses
+    localStorage.removeItem("mainWalletAddress");
+    localStorage.removeItem("backupWalletAddress");
+    // Show logout toast
+    toast.info("Logging out...", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
     // Sign out from NextAuth
     await signOut({ callbackUrl: "/" });
   };
@@ -217,23 +268,99 @@ const Dashboard = () => {
             <div className="flex-1 flex flex-col">
               {/* Header */}
               <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
-                <div className="flex flex-col sm:flex-row justify-between sm:justify-end items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-3 lg:space-y-0 lg:space-x-6">
+                  {/* Wallet Addresses Section */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    {/* Main Wallet */}
+                    {mainWalletAddress && (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z" />
+                          </svg>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                          <span className="text-xs text-gray-500">Main:</span>
+                          <span className="text-xs sm:text-sm text-gray-600 font-mono">
+                            {mainWalletAddress.slice(0, 6)}...
+                            {mainWalletAddress.slice(-4)}
+                          </span>
+                          <button
+                            onClick={() =>
+                              copyToClipboard(mainWalletAddress, "Main")
+                            }
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Backup Wallet */}
+                    {backupWalletAddress && (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z" />
+                          </svg>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                          <span className="text-xs text-gray-500">Backup:</span>
+                          <span className="text-xs sm:text-sm text-gray-600 font-mono">
+                            {backupWalletAddress.slice(0, 6)}...
+                            {backupWalletAddress.slice(-4)}
+                          </span>
+                          <button
+                            onClick={() =>
+                              copyToClipboard(backupWalletAddress, "Backup")
+                            }
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                    <button className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-blue-700 text-xs sm:text-sm transition-colors">
                       <svg
-                        className="w-3 h-3 sm:w-4 sm:h-4 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z" />
-                      </svg>
-                    </div>
-                    <span className="text-xs sm:text-sm text-gray-600">
-                      0x508252d...c79872
-                    </span>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <svg
-                        className="w-4 h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -242,49 +369,34 @@ const Dashboard = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
                         />
                       </svg>
+                      <span className="hidden sm:inline">
+                        Check wallet eligibility
+                      </span>
+                      <span className="sm:hidden">Check</span>
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-red-700 text-xs sm:text-sm transition-colors"
+                    >
+                      <svg
+                        className="w-3 h-3 sm:w-4 sm:h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      <span>Logout</span>
                     </button>
                   </div>
-                  <button className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-blue-700 text-xs sm:text-sm">
-                    <svg
-                      className="w-3 h-3 sm:w-4 sm:h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                      />
-                    </svg>
-                    <span className="hidden sm:inline">
-                      Check wallet eligibility
-                    </span>
-                    <span className="sm:hidden">Check</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-red-700 text-xs sm:text-sm"
-                  >
-                    <svg
-                      className="w-3 h-3 sm:w-4 sm:h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span>Logout</span>
-                  </button>
                 </div>
               </header>
 

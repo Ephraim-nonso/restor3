@@ -27,18 +27,34 @@ export const useEmailVerification = ({
     return Math.floor(10000 + Math.random() * 90000).toString();
   }, []);
 
-  // Simulate sending verification code to email
+  // Send verification code to email
   const sendVerificationCode = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const code = generateVerificationCode();
-      console.log(`Verification code for ${email}: ${code}`); // For development
 
-      // In a real app, you would send this code via email service
-      // await emailService.sendVerificationCode(email, code);
+      // Send verification email via API
+      const response = await fetch("/api/send-verification-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          code,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send verification email");
+      }
+
+      // For development, also log to console
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Verification code for ${email}: ${code}`);
+      }
 
       setVerificationCode(code);
       setTimeLeft(60);
@@ -48,6 +64,7 @@ export const useEmailVerification = ({
 
       return { success: true, code };
     } catch (error) {
+      console.error("Email sending error:", error);
       onVerificationError(
         "Failed to send verification code. Please try again."
       );

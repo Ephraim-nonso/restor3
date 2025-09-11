@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthSessionProvider from "./components/SessionProvider";
 import { WagmiProviderWrapper } from "./components/WagmiProvider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,20 @@ export default function RootLayout({
       >
         <WagmiProviderWrapper>
           <AuthSessionProvider>{children}</AuthSessionProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            toastClassName="!bg-white !text-gray-800 !border !border-gray-200 !shadow-lg"
+            progressClassName="!bg-green-500"
+          />
         </WagmiProviderWrapper>
       </body>
     </html>

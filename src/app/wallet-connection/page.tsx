@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import WalletConnectModal from "../components/WalletConnectModal";
 import EmailVerificationModal from "../components/EmailVerificationModal";
 
@@ -30,6 +31,18 @@ export default function WalletConnectionPage() {
       router.push("/"); // Redirect to home if not authenticated
       return;
     }
+
+    // Load wallet addresses from localStorage if they exist
+    const savedMainWallet = localStorage.getItem("mainWalletAddress");
+    const savedBackupWallet = localStorage.getItem("backupWalletAddress");
+
+    if (savedMainWallet) {
+      setMainWalletAddress(savedMainWallet);
+    }
+    if (savedBackupWallet) {
+      setBackupWalletAddress(savedBackupWallet);
+    }
+
     // If authenticated, show the wallet connection modal
     setShowLinkWallet(true);
   }, [session, status, router]);
@@ -44,14 +57,27 @@ export default function WalletConnectionPage() {
     setShowBackupWalletConnectModal(true);
   };
 
+  const handleWalletError = (error: string) => {
+    toast.error(error, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
+
   const handleMainWalletSuccess = (address: string) => {
     setMainWalletAddress(address);
+    localStorage.setItem("mainWalletAddress", address);
     setShowLinkWallet(false);
     setShowBackupWallet(true);
   };
 
   const handleBackupWalletSuccess = (address: string) => {
     setBackupWalletAddress(address);
+    localStorage.setItem("backupWalletAddress", address);
     setShowBackupWallet(false);
     setShowSecureLinking(true);
   };
@@ -76,6 +102,14 @@ export default function WalletConnectionPage() {
     setShowEmailSuccess(false);
     // Mark that the user has completed the full authentication flow
     localStorage.setItem("authFlowCompleted", "true");
+    toast.success("Welcome to Restor3! Redirecting to your dashboard...", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
     router.push("/");
   };
 
@@ -425,18 +459,22 @@ export default function WalletConnectionPage() {
         isOpen={showWalletConnectModal}
         onClose={() => setShowWalletConnectModal(false)}
         onSuccess={handleMainWalletSuccess}
+        onError={handleWalletError}
         title="Connect Main Wallet"
         description="Connect your main wallet to secure its rewards"
         walletType="main"
+        existingAddress={backupWalletAddress}
       />
 
       <WalletConnectModal
         isOpen={showBackupWalletConnectModal}
         onClose={() => setShowBackupWalletConnectModal(false)}
         onSuccess={handleBackupWalletSuccess}
+        onError={handleWalletError}
         title="Connect Backup Wallet"
         description="Connect your backup wallet to collect rewards"
         walletType="backup"
+        existingAddress={mainWalletAddress}
       />
     </div>
   );

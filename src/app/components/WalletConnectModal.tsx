@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useConnect, useAccount, useDisconnect } from "wagmi";
+import { toast } from "react-toastify";
 import {
   injected,
   metaMask,
@@ -13,18 +14,22 @@ interface WalletConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (address: string) => void;
+  onError?: (error: string) => void;
   title: string;
   description: string;
   walletType: "main" | "backup";
+  existingAddress?: string; // Address to compare against
 }
 
 const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  onError,
   title,
   description,
   walletType,
+  existingAddress,
 }) => {
   const { connect, connectors, isPending } = useConnect();
   const { address, isConnected } = useAccount();
@@ -42,7 +47,43 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
 
   const handleSuccess = () => {
     if (address) {
+      // Check if this address is already used for the other wallet type
+      if (
+        existingAddress &&
+        address.toLowerCase() === existingAddress.toLowerCase()
+      ) {
+        const otherWalletType = walletType === "main" ? "backup" : "main";
+        const errorMessage = `This wallet address is already connected as your ${otherWalletType} wallet. Please connect a different wallet for your ${walletType} wallet.`;
+
+        if (onError) {
+          onError(errorMessage);
+        } else {
+          toast.error(errorMessage, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
+        return;
+      }
+
       onSuccess(address);
+      toast.success(
+        `${
+          walletType === "main" ? "Main" : "Backup"
+        } wallet connected successfully!`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
       onClose();
     }
   };
@@ -60,6 +101,19 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">{title}</h2>
           <p className="text-gray-600 mb-6">{description}</p>
+
+          {existingAddress && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <span className="font-medium">Note:</span> Your{" "}
+                {walletType === "main" ? "backup" : "main"} wallet is already
+                connected:
+                <span className="font-mono text-xs ml-1">
+                  {existingAddress.slice(0, 6)}...{existingAddress.slice(-4)}
+                </span>
+              </p>
+            </div>
+          )}
 
           {!isConnected ? (
             <div className="space-y-3">

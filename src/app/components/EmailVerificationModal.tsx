@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 import { useEmailVerification } from "../hooks/useEmailVerification";
 
 interface EmailVerificationModalProps {
@@ -37,6 +38,17 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     onVerificationSuccess: () => {
       setSuccess(true);
       setError("");
+      toast.success(
+        "Email verification successful! Redirecting to dashboard...",
+        {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
       setTimeout(() => {
         onSuccess();
       }, 2000); // Increased to 2 seconds for better UX
@@ -142,7 +154,8 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
             Email Verification
           </h2>
           <p className="text-gray-600 mb-4 text-sm sm:text-base">
-            Enter the code sent to your email address below.
+            We've sent a 5-digit verification code to your email address. Please
+            check your inbox and enter the code below.
           </p>
           <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 break-all">
             {email}
@@ -153,7 +166,9 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
             {code.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
                 type="text"
                 maxLength={1}
                 value={digit}
@@ -259,8 +274,12 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
 
           {/* Development Helper */}
           {process.env.NODE_ENV === "development" && (
-            <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-              <p>Dev: Check console for verification code</p>
+            <div className="mt-4 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+              <p>
+                <strong>Development Mode:</strong> Check your email inbox for
+                the verification code. If email is not configured, check the
+                browser console for the code.
+              </p>
             </div>
           )}
         </div>
