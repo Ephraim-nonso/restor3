@@ -73,9 +73,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex">
+    <div className="min-h-screen bg-gray-900 flex flex-col lg:flex-row">
       {/* Left Sidebar */}
-      <div className="w-1/2 bg-white p-8 flex flex-col">
+      <div className="w-full lg:w-1/2 bg-white p-4 sm:p-6 lg:p-8 flex flex-col">
         <div className="mt-12">
           {/* <button className="flex items-center text-gray-600 hover:text-gray-800 mb-4">
             <svg
@@ -93,14 +93,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
             </svg>
             Back
           </button> */}
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome to</h1>
-          <h1 className="text-7xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+            Welcome to
+          </h1>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
             Restor3
           </h1>
         </div>
 
         <div className="flex-1 flex items-center">
-          <div className="bg-green-50 rounded-lg p-8 w-full">
+          <div className="bg-green-50 rounded-lg p-4 sm:p-6 lg:p-8 w-full">
             <div className="flex items-center mb-4">
               <svg
                 className="w-6 h-6 text-yellow-500 mr-2"
@@ -127,10 +129,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
       </div>
 
       {/* Right Content */}
-      <div className="w-1/2 bg-gray-800 p-8 flex flex-col justify-center">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-2">Get Access</h2>
-          <p className="text-gray-300 mb-8">
+      <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+        <div className="max-w-md mx-auto w-full">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            Get Access
+          </h2>
+          <p className="text-gray-300 mb-6 sm:mb-8 text-sm sm:text-base">
             A smart way to manage your crypto assets and can also help you earn
             more rewards.
           </p>
@@ -141,13 +145,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                 For you to perform transactions, you need to connect your wallet
                 to your account.
               </p>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                 <input
                   type="text"
                   placeholder="address"
-                  className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="flex-1 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
                 />
-                <button className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">
+                <button className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 flex items-center justify-center sm:justify-start">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -169,7 +173,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
               <p className="text-gray-400 text-sm mb-4">other options</p>
               <button
                 onClick={handleGoogleSignInClick}
-                className="w-full bg-white text-gray-800 cursor-pointer py-3 px-6 rounded-lg font-medium hover:bg-gray-100 flex items-center justify-center space-x-2"
+                className="w-full bg-white text-gray-800 cursor-pointer py-3 px-4 sm:px-6 rounded-lg font-medium hover:bg-gray-100 flex items-center justify-center space-x-2 text-sm sm:text-base"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path
@@ -211,25 +215,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Google Sign In Modal */}
       {showGoogleSignIn && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          {/* <button className="flex items-center text-gray-600 hover:text-gray-800 mb-4">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back
-          </button> */}
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-6">
                 <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24">
                   <path
@@ -249,54 +237,70 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                   Sign in with google
                 </h2>
               </div>
 
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
                 Choose an account you would love to continue with
               </p>
 
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                 <div
-                  className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center p-2 sm:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
                   onClick={handleGoogleAccountSelect}
                 >
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-white font-medium">AS</span>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                    <span className="text-white font-medium text-sm sm:text-base">
+                      AS
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Adebayo Solomon</p>
-                    <p className="text-sm text-gray-500">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-800 text-sm sm:text-base truncate">
+                      Adebayo Solomon
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 truncate">
                       Adebayosolomon74@gmail.com
                     </p>
                   </div>
                 </div>
 
                 <div
-                  className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center p-2 sm:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
                   onClick={handleGoogleAccountSelect}
                 >
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-white font-medium">AS</span>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                    <span className="text-white font-medium text-sm sm:text-base">
+                      AS
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Adebayo Solomon</p>
-                    <p className="text-sm text-gray-500">Oxprank@gmail.com</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-800 text-sm sm:text-base truncate">
+                      Adebayo Solomon
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 truncate">
+                      Oxprank@gmail.com
+                    </p>
                   </div>
                 </div>
 
                 <div
-                  className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center p-2 sm:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
                   onClick={handleGoogleAccountSelect}
                 >
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-white font-medium">AS</span>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                    <span className="text-white font-medium text-sm sm:text-base">
+                      AS
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Adebayo Solomon</p>
-                    <p className="text-sm text-gray-500">OxKode@gmail.com</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-800 text-sm sm:text-base truncate">
+                      Adebayo Solomon
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 truncate">
+                      OxKode@gmail.com
+                    </p>
                   </div>
                 </div>
               </div>
@@ -315,33 +319,33 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Link Wallet Modal */}
       {showLinkWallet && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                 Link Wallet
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
                 Connect your Main wallet, this is the wallet you wish to secure
                 its rewards
               </p>
 
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-4 sm:mb-6">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{ width: "40%" }}
                 ></div>
               </div>
 
-              <div className="flex items-center space-x-2 mb-6">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-4 sm:mb-6">
                 <input
                   type="text"
                   placeholder="Connect your MAIN wallet"
-                  className="flex-1 bg-gray-100 text-gray-800 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="flex-1 bg-gray-100 text-gray-800 px-3 sm:px-4 py-2 sm:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
                 />
                 <button
                   onClick={handleLinkMainWallet}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center space-x-2"
+                  className="bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-green-700 flex items-center justify-center space-x-2 text-sm sm:text-base"
                 >
                   <svg
                     className="w-5 h-5"

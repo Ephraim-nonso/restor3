@@ -71,19 +71,19 @@ const Dashboard = () => {
         return <WalletManagementPage onNavigate={setCurrentPage} />;
       default:
         return (
-          <div className="flex h-screen bg-gray-50">
+          <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
             {/* Sidebar */}
-            <div className="w-64 bg-white shadow-sm">
-              <div className="p-6">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+            <div className="w-full lg:w-64 bg-white shadow-sm lg:shadow-sm">
+              <div className="p-4 sm:p-6">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
                   Restor3
                 </h1>
               </div>
 
-              <nav className="mt-8">
-                <div className="px-6">
+              <nav className="mt-4 sm:mt-8">
+                <div className="px-4 sm:px-6">
                   <div
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg mb-2 cursor-pointer ${
+                    className={`flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2 rounded-lg mb-1 sm:mb-2 cursor-pointer ${
                       currentPage === "overview"
                         ? "bg-green-50"
                         : "text-gray-600 hover:bg-gray-50"
@@ -104,11 +104,11 @@ const Dashboard = () => {
                       />
                     </svg>
                     <span
-                      className={
+                      className={`text-sm sm:text-base ${
                         currentPage === "overview"
                           ? "text-gray-800 font-medium"
-                          : ""
-                      }
+                          : "text-gray-600"
+                      }`}
                     >
                       Overview
                     </span>
@@ -216,19 +216,19 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
               {/* Header */}
-              <header className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="flex justify-end items-center space-x-4">
+              <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+                <div className="flex flex-col sm:flex-row justify-between sm:justify-end items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                   <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 rounded-full flex items-center justify-center">
                       <svg
-                        className="w-4 h-4 text-white"
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-white"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
                         <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z" />
                       </svg>
                     </div>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-gray-600">
                       0x508252d...c79872
                     </span>
                     <button className="text-gray-400 hover:text-gray-600">
@@ -247,9 +247,9 @@ const Dashboard = () => {
                       </svg>
                     </button>
                   </div>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700">
+                  <button className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-blue-700 text-xs sm:text-sm">
                     <svg
-                      className="w-4 h-4"
+                      className="w-3 h-3 sm:w-4 sm:h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -261,14 +261,17 @@ const Dashboard = () => {
                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
                       />
                     </svg>
-                    <span>Check wallet eligibility</span>
+                    <span className="hidden sm:inline">
+                      Check wallet eligibility
+                    </span>
+                    <span className="sm:hidden">Check</span>
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-red-700"
+                    className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 hover:bg-red-700 text-xs sm:text-sm"
                   >
                     <svg
-                      className="w-4 h-4"
+                      className="w-3 h-3 sm:w-4 sm:h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -286,12 +289,12 @@ const Dashboard = () => {
               </header>
 
               {/* Dashboard Content */}
-              <main className="flex-1 p-6 space-y-6">
+              <main className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Total Claims Card */}
-                  <div className="bg-white rounded-lg shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                  <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800">
                       Total Claims
                     </h3>
                     <p className="text-sm text-gray-500 mb-4">

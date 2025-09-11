@@ -105,35 +105,35 @@ export default function WalletConnectionPage() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
       {/* Link Wallet Modal */}
       {showLinkWallet && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                 Link Wallet
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
                 Connect your Main wallet, this is the wallet you wish to secure
                 its rewards
               </p>
 
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-4 sm:mb-6">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{ width: "40%" }}
                 ></div>
               </div>
 
-              <div className="flex items-center space-x-2 mb-6">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-4 sm:mb-6">
                 <input
                   type="text"
                   placeholder={mainWalletAddress || "Connect your MAIN wallet"}
                   value={mainWalletAddress}
                   readOnly
-                  className="flex-1 bg-gray-100 text-gray-800 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="flex-1 bg-gray-100 text-gray-800 px-3 sm:px-4 py-2 sm:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
                 />
                 <button
                   onClick={handleConnectMainWallet}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center space-x-2"
+                  className="bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-green-700 flex items-center justify-center space-x-2 text-sm sm:text-base"
                 >
                   <svg
                     className="w-5 h-5"

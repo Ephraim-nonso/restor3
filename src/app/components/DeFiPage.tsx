@@ -14,19 +14,19 @@ const DeFiPage: React.FC<DeFiPageProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+      <div className="w-full lg:w-64 bg-white shadow-sm">
+        <div className="p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
             Restor3
           </h1>
         </div>
 
-        <nav className="mt-8">
-          <div className="px-6">
+        <nav className="mt-4 sm:mt-8">
+          <div className="px-4 sm:px-6">
             <div
-              className="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg mb-2 cursor-pointer"
+              className="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg mb-1 sm:mb-2 cursor-pointer"
               onClick={() => handleNavigation("overview")}
             >
               <svg
@@ -108,8 +108,8 @@ const DeFiPage: React.FC<DeFiPageProps> = ({ onNavigate }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex justify-end items-center space-x-4">
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row justify-between sm:justify-end items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="flex items-center space-x-2">
               <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                 <svg
@@ -157,18 +157,18 @@ const DeFiPage: React.FC<DeFiPageProps> = ({ onNavigate }) => {
         </header>
 
         {/* DeFi Content */}
-        <main className="flex-1 p-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
               DeFi Dashboard
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Manage your decentralized finance activities
             </p>
           </div>
 
           {/* DeFi Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-800">

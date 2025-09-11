@@ -135,19 +135,21 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
             Email Verification
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-4 text-sm sm:text-base">
             Enter the code sent to your email address below.
           </p>
-          <p className="text-sm text-gray-500 mb-6">{email}</p>
+          <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 break-all">
+            {email}
+          </p>
 
           {/* Code Input Fields */}
-          <div className="flex space-x-2 mb-6 justify-center">
+          <div className="flex space-x-1 sm:space-x-2 mb-4 sm:mb-6 justify-center">
             {code.map((digit, index) => (
               <input
                 key={index}
@@ -158,7 +160,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
-                className={`w-12 h-12 text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-lg font-semibold ${
+                className={`w-10 h-10 sm:w-12 sm:h-12 text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-base sm:text-lg font-semibold ${
                   error
                     ? "border-red-500 bg-red-50"
                     : success

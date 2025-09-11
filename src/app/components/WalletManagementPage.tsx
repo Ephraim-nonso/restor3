@@ -429,9 +429,9 @@ const WalletManagementPage: React.FC<WalletManagementPageProps> = ({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm">
+      <div className="w-full lg:w-64 bg-white shadow-sm">
         <div className="p-6">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
             Restor3
