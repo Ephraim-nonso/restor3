@@ -17,6 +17,17 @@ export const useAuth = () => {
     }
   };
 
+  const handleAppleSignIn = async () => {
+    try {
+      await signIn("apple", {
+        callbackUrl: "/wallet-connection", // Redirect to wallet connection page
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("Apple sign in error:", error);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut({ callbackUrl: "/" });
@@ -32,6 +43,7 @@ export const useAuth = () => {
     isAuthenticated: !!session,
     user: session?.user,
     handleGoogleSignIn,
+    handleAppleSignIn,
     handleSignOut,
   };
 };

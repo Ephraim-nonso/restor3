@@ -18,12 +18,22 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
   const [showEmailSuccess, setShowEmailSuccess] = useState(false);
 
   // Add the useAuth hook
-  const { session, isLoading, isAuthenticated, user, handleGoogleSignIn } =
-    useAuth();
+  const {
+    session,
+    isLoading,
+    isAuthenticated,
+    user,
+    handleGoogleSignIn,
+    handleAppleSignIn,
+  } = useAuth();
 
   // Replace the dummy handleGoogleSignIn with this one that calls the real auth
   const handleGoogleSignInClick = async () => {
     await handleGoogleSignIn();
+  };
+
+  const handleAppleSignInClick = async () => {
+    await handleAppleSignIn();
   };
 
   const handleGoogleAccountSelect = () => {
@@ -73,10 +83,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+    <div className="h-screen bg-white flex flex-col lg:flex-row overflow-hidden">
       {/* Left Sidebar */}
       <div
-        className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 flex-shrink-0"
+        className="w-full lg:w-1/2 p-3 sm:p-4 lg:p-6 flex-shrink-0 overflow-hidden"
         style={{
           backgroundImage: "url('/bg-rectangle.svg')",
           backgroundSize: "200% 100%",
@@ -84,41 +94,41 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="flex items-center justify-center lg:justify-start h-full min-h-[300px] lg:min-h-screen">
-          <div className="text-center lg:text-left">
+        <div className="flex items-center justify-center lg:justify-start h-full py-4">
+          <div className="text-center lg:text-left w-full max-w-sm lg:max-w-none">
             {/* Welcome to Restor3 */}
-            <div className="mb-6 lg:mb-8">
+            <div className="mb-4 lg:mb-6">
               <h1
-                className="text-lg sm:text-xl md:text-2xl font-bold mb-2"
+                className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2"
                 style={{
                   color: "rgba(170, 170, 170, 1)",
                 }}
               >
                 Welcome to
               </h1>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-yellow-300 to-green-700 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-yellow-300 to-green-700 bg-clip-text text-transparent leading-tight">
                 Restor3
               </h1>
             </div>
 
             {/* Yellow Card */}
             <div
-              className="flex flex-col sm:flex-row bg-yellow-300 rounded-lg p-4 sm:p-6 lg:p-8 mx-auto lg:mx-0"
+              className="flex flex-col sm:flex-row bg-yellow-300 rounded-lg p-3 sm:p-4 lg:p-6 mx-auto lg:mx-0"
               style={{
                 width: "100%",
-                maxWidth: "346px",
-                minHeight: "189px",
+                maxWidth: "320px",
+                minHeight: "160px",
               }}
             >
-              <div className="flex-1 mb-4 sm:mb-0 sm:mr-4">
+              <div className="flex-1 mb-3 sm:mb-0 sm:mr-3">
                 <div className="text-center sm:text-left">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 mb-1 sm:mb-2">
                     Secure your investment
                   </h2>
-                  <p className="text-sm sm:text-base text-gray-700 mb-4">
+                  <p className="text-xs sm:text-sm text-gray-700 mb-3 sm:mb-4">
                     Stay ahead
                   </p>
-                  <button className="text-black px-4 py-2 rounded-lg font-medium bg-white hover:bg-gray-100 transition-colors">
+                  <button className="text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium bg-white hover:bg-gray-100 transition-colors text-xs sm:text-sm">
                     Get Started
                   </button>
                 </div>
@@ -127,7 +137,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                 <img
                   src="/phone.svg"
                   alt="Phone"
-                  className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24"
+                  className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20"
                 />
               </div>
             </div>
@@ -137,7 +147,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Right Content */}
       <div
-        className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 flex flex-col justify-center min-h-[400px] lg:min-h-screen"
+        className="w-full lg:w-1/2 p-3 sm:p-4 lg:p-6 flex flex-col justify-center h-full overflow-hidden"
         style={{
           backgroundImage: "url('/bg-rectangle.svg')",
           backgroundSize: "cover",
@@ -146,7 +156,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
         }}
       >
         <div
-          className="max-w-md mx-auto w-full rounded-2xl px-6 sm:px-8 md:px-12 py-8 sm:py-12 md:py-16"
+          className="max-w-sm mx-auto w-full rounded-2xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10"
           style={{
             background: "rgba(255, 255, 255, 0.1)",
             backdropFilter: "blur(20px)",
@@ -154,17 +164,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black mb-2 text-center lg:text-left">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black mb-2 text-center lg:text-left">
             Get Started
           </h2>
-          <p className="text-gray-300 mb-6 sm:mb-8 text-sm sm:text-base text-center lg:text-left">
+          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm text-center lg:text-left leading-relaxed">
             A smart way to manage your crypto assets and can also help you earn
             more rewards.
           </p>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div
-              className="rounded-xl p-3 sm:p-4"
+              className="rounded-xl p-2 sm:p-3"
               style={{
                 background: "rgba(255, 255, 255, 0.05)",
                 backdropFilter: "blur(10px)",
@@ -172,11 +182,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                 boxShadow: "0 4px 16px rgba(0, 0, 0, 0.05)",
               }}
             >
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                 <input
                   type="text"
                   placeholder="Enter wallet address"
-                  className="flex-1 text-white px-3 sm:px-4 py-3 sm:py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base placeholder-gray-400"
+                  className="flex-1 text-white px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-xs sm:text-sm placeholder-gray-400"
                   style={{
                     background: "rgba(255, 255, 255, 0.1)",
                     backdropFilter: "blur(10px)",
@@ -184,7 +194,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                   }}
                 />
                 <button
-                  className="text-white px-4 py-3 sm:p-2 rounded-lg hover:opacity-80 flex items-center justify-center sm:justify-start transition-opacity min-h-[44px] sm:min-h-auto"
+                  className="text-white px-3 py-2 sm:p-2 rounded-lg hover:opacity-80 flex items-center justify-center sm:justify-start transition-opacity min-h-[40px] sm:min-h-auto"
                   style={{
                     background: "rgba(34, 197, 94, 0.8)",
                     backdropFilter: "blur(10px)",
@@ -193,7 +203,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                   }}
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -209,16 +219,18 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
               </div>
             </div>
 
-            <div className="text-center my-6 sm:my-8">
-              <div className="flex items-center justify-center mb-4">
+            <div className="text-center my-4 sm:my-6">
+              <div className="flex items-center justify-center mb-3">
                 <div className="flex-1 h-px bg-gray-300"></div>
-                <p className="text-gray-400 text-sm px-4">other options</p>
+                <p className="text-gray-400 text-xs sm:text-sm px-3">
+                  other options
+                </p>
                 <div className="flex-1 h-px bg-gray-300"></div>
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-8">
+              <div className="flex items-center justify-center">
                 <button
                   onClick={handleGoogleSignInClick}
-                  className="text-gray-800 cursor-pointer py-3 px-6 sm:px-4 lg:px-6 rounded-xl font-medium hover:opacity-80 flex items-center justify-center space-x-2 text-sm sm:text-base transition-opacity w-full sm:w-auto min-h-[44px]"
+                  className="text-gray-800 cursor-pointer py-2.5 px-4 sm:px-3 rounded-xl font-medium hover:opacity-80 flex items-center justify-center space-x-2 text-xs sm:text-sm transition-opacity w-full sm:w-auto min-h-[40px]"
                   style={{
                     background: "rgba(255, 255, 255, 0.2)",
                     backdropFilter: "blur(10px)",
@@ -226,7 +238,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -245,28 +257,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
                     />
                   </svg>
                 </button>
-                <button
-                  onClick={handleGoogleSignInClick}
-                  className="text-gray-800 cursor-pointer py-3 px-6 sm:px-4 lg:px-6 rounded-xl font-medium hover:opacity-80 flex items-center justify-center space-x-2 text-sm sm:text-base transition-opacity w-full sm:w-auto min-h-[44px]"
-                  style={{
-                    background: "rgba(255, 255, 255, 0.2)",
-                    backdropFilter: "blur(10px)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                  </svg>
-                </button>
               </div>
             </div>
 
-            <div className="text-center text-gray-400 text-xs sm:text-sm">
+            <div className="text-center text-gray-400 text-xs">
               <p className="leading-relaxed">
                 Going ahead with this action signifies that you have accepted
                 our{" "}
@@ -295,9 +289,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Google Sign In Modal */}
       {showGoogleSignIn && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-center mb-6">
                 <div className="flex items-center">
                   <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24">
@@ -401,9 +395,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Link Wallet Modal */}
       {showLinkWallet && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 text-center">
                 Link Wallet
               </h2>
@@ -452,9 +446,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Backup Wallet Modal */}
       {showBackupWallet && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 text-center">
                 Link Wallet
               </h2>
@@ -520,9 +514,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Secure Wallet Linking Modal */}
       {showSecureLinking && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 text-center">
                 Secure Wallet Linking
               </h2>
@@ -619,9 +613,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Checking Eligibility Modal */}
       {showCheckingEligibility && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6 text-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6 text-center">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                 Checking for eligibility
               </h2>
@@ -656,9 +650,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
 
       {/* Email Success Modal */}
       {showEmailSuccess && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6 text-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-sm sm:max-w-md w-full max-h-[95vh] overflow-y-auto">
+            <div className="p-3 sm:p-4 md:p-6 text-center">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                 Email Verification
               </h2>

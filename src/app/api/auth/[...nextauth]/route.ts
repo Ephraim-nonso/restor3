@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+// import AppleProvider from "@/lib/apple-provider"; // Requires Apple Developer Program
 
 const handler = NextAuth({
   providers: [
@@ -7,6 +8,10 @@ const handler = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+    // AppleProvider({
+    //   clientId: process.env.APPLE_CLIENT_ID!,
+    //   clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    // }), // Requires Apple Developer Program ($99/year)
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
