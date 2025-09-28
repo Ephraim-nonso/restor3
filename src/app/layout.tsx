@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthSessionProvider from "./components/SessionProvider";
 import { WagmiProviderWrapper } from "./components/WagmiProvider";
+import { WalletProvider } from "./contexts/WalletContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,7 +34,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <WagmiProviderWrapper>
-          <AuthSessionProvider>{children}</AuthSessionProvider>
+          <AuthSessionProvider>
+            <WalletProvider>{children}</WalletProvider>
+          </AuthSessionProvider>
           <ToastContainer
             position="top-right"
             autoClose={5000}

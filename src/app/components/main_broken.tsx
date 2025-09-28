@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useWallet } from "../contexts/WalletContext";
-import { useDebank } from "../hooks/useDebank";
-import { formatUsdValue, formatPercentage } from "../../lib/debank";
 import Modal from "./Modal";
 import {
   ClaimsModalContent,
@@ -27,18 +25,6 @@ const Dashboard = () => {
   });
   const { mainWalletAddress, backupWalletAddress } = useWallet();
   const router = useRouter();
-
-  // Fetch Debank data for the main wallet
-  const {
-    overview: mainWalletOverview,
-    protocols: mainWalletProtocols,
-    tokens: mainWalletTokens,
-    loading: mainWalletLoading,
-    error: mainWalletError,
-  } = useDebank({
-    address: mainWalletAddress,
-    enabled: !!mainWalletAddress && currentPage === "overview",
-  });
 
   const copyToClipboard = async (text: string, walletType: string) => {
     try {
@@ -66,11 +52,20 @@ const Dashboard = () => {
   const handleLogout = async () => {
     // Clear the authentication flow completion flag
     localStorage.removeItem("authFlowCompleted");
+    // Clear wallet addresses
     localStorage.removeItem("mainWalletAddress");
     localStorage.removeItem("backupWalletAddress");
-
-    await signOut({ redirect: false });
-    router.push("/");
+    // Show logout toast
+    toast.info("Logging out...", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    // Sign out from NextAuth
+    await signOut({ callbackUrl: "/" });
   };
 
   const openModal = (type: string, title: string) => {
@@ -182,42 +177,10 @@ const Dashboard = () => {
                       className={
                         currentPage === "defi"
                           ? "text-gray-800 font-medium"
-                          : "text-gray-600"
+                          : ""
                       }
                     >
                       DeFi
-                    </span>
-                  </div>
-
-                  <div
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg mb-2 cursor-pointer ${
-                      currentPage === "alerts"
-                        ? "bg-green-50"
-                        : "text-gray-600 hover:bg-gray-50"
-                    }`}
-                    onClick={() => setCurrentPage("alerts")}
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L16 7l-6 6-6-6z"
-                      />
-                    </svg>
-                    <span
-                      className={
-                        currentPage === "alerts"
-                          ? "text-gray-800 font-medium"
-                          : "text-gray-600"
-                      }
-                    >
-                      Alerts
                     </span>
                   </div>
 
@@ -239,17 +202,49 @@ const Dashboard = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                       />
                     </svg>
                     <span
                       className={
                         currentPage === "wallet-management"
                           ? "text-gray-800 font-medium"
-                          : "text-gray-600"
+                          : ""
                       }
                     >
                       Wallet Management
+                    </span>
+                  </div>
+
+                  <div
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg cursor-pointer ${
+                      currentPage === "alerts"
+                        ? "bg-green-50"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                    onClick={() => setCurrentPage("alerts")}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 004 6v12a4 4 0 004 4h12a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-4 4v12a4 4 0 004 4h12"
+                      />
+                    </svg>
+                    <span
+                      className={
+                        currentPage === "alerts"
+                          ? "text-gray-800 font-medium"
+                          : ""
+                      }
+                    >
+                      Alerts
                     </span>
                   </div>
                 </div>
@@ -258,9 +253,6 @@ const Dashboard = () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
-              {/* Header */}
-              <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-3 lg:space-y-0 lg:space-x-6">
                   {/* Wallet Addresses Section */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                     {/* Main Wallet */}
@@ -346,30 +338,6 @@ const Dashboard = () => {
                         </div>
                       </div>
                     )}
-
-                    {/* No Wallets Connected */}
-                    {!mainWalletAddress && !backupWalletAddress && (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-300 rounded-full flex items-center justify-center">
-                          <svg
-                            className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                            />
-                          </svg>
-                        </div>
-                        <span className="text-xs sm:text-sm text-gray-500">
-                          No wallets connected
-                        </span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Action Buttons */}
@@ -420,71 +388,30 @@ const Dashboard = () => {
               <main className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {/* Portfolio Value Card */}
+                  {/* Total Claims Card */}
                   <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-                      Portfolio Value
+                      Total Claims
                     </h3>
                     <p className="text-sm text-gray-500 mb-4">
-                      Total wallet value
+                      Amount of claims made
                     </p>
                     <div className="mb-4">
-                      {mainWalletLoading ? (
-                        <div className="animate-pulse">
-                          <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-24"></div>
-                        </div>
-                      ) : mainWalletError ? (
-                        <div className="text-red-600 text-sm">
-                          Error loading data
-                        </div>
-                      ) : (
-                        <>
-                          <span className="text-3xl font-bold text-green-600">
-                            {mainWalletOverview?.total_usd_value
-                              ? formatUsdValue(
-                                  mainWalletOverview.total_usd_value
-                                )
-                              : "$0.00"}
-                          </span>
-                          {mainWalletOverview?.total_usd_value_change_24h && (
-                            <div className="flex items-center mt-1">
-                              <span
-                                className={`text-sm ${
-                                  mainWalletOverview.total_usd_value_change_24h >=
-                                  0
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
-                              >
-                                {mainWalletOverview.total_usd_value_change_24h >=
-                                0
-                                  ? "+"
-                                  : ""}
-                                {formatUsdValue(
-                                  Math.abs(
-                                    mainWalletOverview.total_usd_value_change_24h
-                                  )
-                                )}
-                              </span>
-                              <span className="text-xs text-gray-500 ml-2">
-                                (
-                                {formatPercentage(
-                                  mainWalletOverview.total_usd_value_change_24h_percentage
-                                )}
-                                )
-                              </span>
-                            </div>
-                          )}
-                        </>
-                      )}
+                      <span className="text-3xl font-bold text-green-600">
+                        10
+                      </span>
+                      <span className="text-sm text-gray-500 ml-2">
+                        ($2,569889894329090490904r092)
+                      </span>
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => setCurrentPage("defi")}
+                        onClick={() =>
+                          openModal("claims", "Total number of claims")
+                        }
                         className="w-full bg-green-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-green-700"
                       >
-                        View DeFi Details
+                        Pending claim (2)
                       </button>
                       <button
                         onClick={() => openModal("claims", "All Claims")}
@@ -495,281 +422,248 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* Active Protocols Card */}
+                  {/* Active Protocol Stake Card */}
                   <div className="bg-white rounded-lg shadow-sm p-6">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      Active Protocols
+                      Active Protocol Stake
                     </h3>
                     <p className="text-sm text-gray-500 mb-4">
-                      Connected DeFi protocols
+                      Cumulative stake on all accounts
                     </p>
                     <div className="mb-4">
-                      {mainWalletLoading ? (
-                        <div className="animate-pulse">
-                          <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-20"></div>
-                        </div>
-                      ) : mainWalletError ? (
-                        <div className="text-red-600 text-sm">
-                          Error loading data
-                        </div>
-                      ) : (
-                        <>
-                          <span className="text-3xl font-bold text-blue-600">
-                            {mainWalletOverview?.protocol_list?.length || 0}
-                          </span>
-                          <span className="text-sm text-gray-500 ml-2">
-                            protocols
-                          </span>
-                        </>
-                      )}
+                      <span className="text-3xl font-bold text-gray-800">
+                        7
+                      </span>
+                      <span className="text-sm text-gray-500 ml-2">
+                        ($20,562)
+                      </span>
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => setCurrentPage("defi")}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-blue-700"
-                      >
-                        View Protocols
-                      </button>
-                      <button
-                        onClick={() => openModal("stakes", "All Stakes")}
-                        className="w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg text-sm hover:bg-blue-50"
-                      >
-                        Manage Stakes
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Token Holdings Card */}
-                  <div className="bg-white rounded-lg shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      Token Holdings
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-4">
-                      Unique tokens held
-                    </p>
-                    <div className="mb-4">
-                      {mainWalletLoading ? (
-                        <div className="animate-pulse">
-                          <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-20"></div>
-                        </div>
-                      ) : mainWalletError ? (
-                        <div className="text-red-600 text-sm">
-                          Error loading data
-                        </div>
-                      ) : (
-                        <>
-                          <span className="text-3xl font-bold text-purple-600">
-                            {mainWalletOverview?.token_list?.length || 0}
-                          </span>
-                          <span className="text-sm text-gray-500 ml-2">
-                            tokens
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => setCurrentPage("defi")}
+                        onClick={() =>
+                          openModal("stakes", "Active Protocol Stake")
+                        }
                         className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-purple-700"
                       >
-                        View Tokens
+                        View all stake
                       </button>
                       <button
-                        onClick={() => setCurrentPage("wallet-management")}
+                        onClick={() => openModal("pools", "Available Pools")}
                         className="w-full border border-purple-600 text-purple-600 py-2 px-4 rounded-lg text-sm hover:bg-purple-50"
                       >
-                        Wallet Settings
+                        See other pools
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Wallet Information Card */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Wallet Information
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Overview of connected accounts
+                    </p>
+                    <div className="mb-4">
+                      <span className="text-3xl font-bold text-blue-600">
+                        1
+                      </span>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <span className="text-sm text-gray-600">
+                          Connected Wallet
+                        </span>
+                        <svg
+                          className="w-4 h-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-gray-500">0x508252d...c72</p>
+                    </div>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => openModal("wallet", "Connect Wallet")}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-blue-700"
+                      >
+                        Connect other accounts
+                      </button>
+                      <button
+                        onClick={() => openModal("wallet", "Manage Accounts")}
+                        className="w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg text-sm hover:bg-blue-50"
+                      >
+                        Manage accounts
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Wallet Summary */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Wallet Summary
-                  </h3>
-                  {mainWalletLoading ? (
-                    <div className="space-y-4">
-                      <div className="animate-pulse">
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                  ) : mainWalletError ? (
-                    <div className="text-center py-8">
-                      <div className="text-red-600 text-sm mb-2">
-                        Error loading wallet data
-                      </div>
-                      <p className="text-gray-500 text-sm">
-                        Please check your connection and try again
-                      </p>
-                    </div>
-                  ) : !mainWalletAddress ? (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg
-                          className="w-8 h-8 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                          />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-2">
-                        No Wallet Connected
-                      </h4>
-                      <p className="text-gray-500 text-sm mb-4">
-                        Connect your wallet to view your DeFi portfolio
-                      </p>
-                      <button
-                        onClick={() => setCurrentPage("wallet-management")}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
-                      >
-                        Connect Wallet
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-2xl font-bold text-gray-900">
-                            {mainWalletOverview?.chain_list?.length || 0}
-                          </div>
-                          <div className="text-sm text-gray-600">Chains</div>
-                        </div>
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-2xl font-bold text-gray-900">
-                            {mainWalletOverview?.nft_list?.length || 0}
-                          </div>
-                          <div className="text-sm text-gray-600">NFTs</div>
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">
-                          Main Wallet: {mainWalletAddress.slice(0, 6)}...
-                          {mainWalletAddress.slice(-4)}
-                        </p>
-                        {backupWalletAddress && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            Backup Wallet: {backupWalletAddress.slice(0, 6)}...
-                            {backupWalletAddress.slice(-4)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Actions */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Quick Actions
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <button
-                      onClick={() => openModal("pools", "Liquidity Pools")}
-                      className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-                        <svg
-                          className="w-4 h-4 text-blue-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                          />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        Liquidity Pools
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => openModal("claims", "Claim Rewards")}
-                      className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mb-2">
-                        <svg
-                          className="w-4 h-4 text-green-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                          />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        Claim Rewards
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => openModal("stakes", "Stake Tokens")}
-                      className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mb-2">
-                        <svg
-                          className="w-4 h-4 text-purple-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                          />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        Stake Tokens
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => setCurrentPage("wallet-management")}
-                      className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mb-2">
-                        <svg
-                          className="w-4 h-4 text-orange-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                          />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        Wallet Settings
-                      </span>
-                    </button>
+                {/* Active Pools Table */}
+                <div className="bg-white rounded-lg shadow-sm">
+                  <div className="p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Active Pools
+                    </h2>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Pools
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center space-x-1">
+                              <span>APY</span>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                                />
+                              </svg>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center space-x-1">
+                              <span>TVL</span>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                                />
+                              </svg>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center space-x-1">
+                              <span>Volume</span>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                                />
+                              </svg>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center space-x-1">
+                              <span>Your Stake</span>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                                />
+                              </svg>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {[1, 2, 3, 4].map((item, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center space-x-3">
+                                <div className="flex -space-x-2">
+                                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <svg
+                                      className="w-4 h-4 text-gray-600"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M10 2a8 8 0 100 16 8 8 0 000-16z" />
+                                    </svg>
+                                  </div>
+                                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <svg
+                                      className="w-4 h-4 text-white"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M10 2a8 8 0 100 16 8 8 0 000-16z" />
+                                    </svg>
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">
+                                    WETH / LISK
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    Earn: USDT
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              Flexible
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              7.75 %
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              $1.25M
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              $1.25M
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {index === 0 || index === 3 ? "$51,000" : "-"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg
+                                  className="w-5 h-5"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </main>
