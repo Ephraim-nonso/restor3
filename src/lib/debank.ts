@@ -92,6 +92,13 @@ export interface WalletOverview {
   history_list: any[];
 }
 
+export interface ExtendedWalletOverview extends WalletOverview {
+  totalTokens: number;
+  totalProtocols: number;
+  totalNfts: number;
+  totalTransactions: number;
+}
+
 export interface DebankApiResponse<T> {
   data: T;
   success: boolean;

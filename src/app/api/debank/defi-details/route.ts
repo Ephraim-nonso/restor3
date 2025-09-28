@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { debankApi } from "@/lib/debank";
+import { debankApi, ExtendedWalletOverview } from "@/lib/debank";
 
 export async function GET(request: NextRequest) {
   try {
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       historyList: historyList.status === "fulfilled" ? historyList.value : [],
       chainList: chainList.status === "fulfilled" ? chainList.value : [],
       lastUpdated: new Date().toISOString(),
-      errors: [],
+      errors: [] as string[],
     };
 
     // Calculate additional metrics
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
         totalProtocols: defiDetails.protocolList.length,
         totalNfts: defiDetails.nftList.length,
         totalTransactions: defiDetails.historyList.length,
-      };
+      } as ExtendedWalletOverview;
     }
 
     // Collect any errors
@@ -129,6 +129,3 @@ export async function GET(request: NextRequest) {
 export async function POST() {
   return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
-
-
-
